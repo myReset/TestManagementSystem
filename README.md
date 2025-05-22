@@ -13,11 +13,14 @@
 ### 试卷借阅
 ![img_2.png](img/img_2.png)
 
-### 试卷归还
+### 试卷归还（更新前）
 ![img_3.png](img/img_3.png)
-
+#### 试卷归还 更新后
+![img_3.png](img/Snipaste_2025-05-22_18-01-09.jpg)
 ### 借阅记录
 ![img_4.png](img/img_4.png)
+#### 借阅记录 更新后
+![img_3.png](img/update.jpg)
 
 ### 统计分析
 ![img_5.png](img/img_5.png)
