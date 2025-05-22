@@ -46,17 +46,17 @@ class PaperForm(FlaskForm):
 
 class BorrowForm(FlaskForm):
     """借阅表单"""
-    semester = StringField('所属学期', validators=[DataRequired(), Length(1, 20)])
-    course_name = StringField('课程名称', validators=[DataRequired(), Length(1, 100)])
-    class_name = StringField('班级', validators=[DataRequired(), Length(1, 50)])
+    semester = SelectField('所属学期', validators=[DataRequired()], choices=[])
+    course_name = SelectField('课程名称', validators=[DataRequired()], choices=[])
+    class_name = SelectField('班级', validators=[DataRequired()], choices=[])
     submit = SubmitField('借阅')
 
 
 class ReturnForm(FlaskForm):
     """归还表单"""
-    semester = StringField('所属学期', validators=[DataRequired(), Length(1, 20)])
-    course_name = StringField('课程名称', validators=[DataRequired(), Length(1, 100)])
-    class_name = StringField('班级', validators=[DataRequired(), Length(1, 50)])
+    semester = SelectField('所属学期', validators=[DataRequired()], choices=[])
+    course_name = SelectField('课程名称', validators=[DataRequired()], choices=[])
+    class_name = SelectField('班级', validators=[DataRequired()], choices=[])
     submit = SubmitField('归还')
 
 

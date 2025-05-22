@@ -9,15 +9,21 @@
   </div>
   <div class="card-body">
     <div class="alert alert-info">
-      <i class="fas fa-info-circle me-2"></i> 请输入需要借阅的试卷信息，系统将为您查找对应的试卷。
+      <i class="fas fa-info-circle me-2"></i> 请选择需要借阅的试卷信息，系统将为您查找对应的试卷。
     </div>
 
-    <form method="post">
+    <form method="post" id="borrowForm">
       {{ form.hidden_tag() }}
+
+      <!-- 添加隐藏字段保存选中的值 -->
+      <input type="hidden" id="selected_semester_hidden" name="selected_semester">
+      <input type="hidden" id="selected_course_hidden" name="selected_course">
+      <input type="hidden" id="selected_class_hidden" name="selected_class">
+
       <div class="row">
         <div class="col-md-4 mb-3">
           {{ form.semester.label(class="form-label") }}
-          {{ form.semester(class="form-control", placeholder="例如：2023-2024-1") }}
+          {{ form.semester(class="form-control", id="semester") }}
           {% if form.semester.errors %}
           <div class="text-danger">
             {% for error in form.semester.errors %}
@@ -28,7 +34,7 @@
         </div>
         <div class="col-md-4 mb-3">
           {{ form.course_name.label(class="form-label") }}
-          {{ form.course_name(class="form-control", placeholder="例如：Python程序设计") }}
+          {{ form.course_name(class="form-control", id="course_name") }}
           {% if form.course_name.errors %}
           <div class="text-danger">
             {% for error in form.course_name.errors %}
@@ -39,7 +45,7 @@
         </div>
         <div class="col-md-4 mb-3">
           {{ form.class_name.label(class="form-label") }}
-          {{ form.class_name(class="form-control", placeholder="例如：计算机2301") }}
+          {{ form.class_name(class="form-control", id="class_name") }}
           {% if form.class_name.errors %}
           <div class="text-danger">
             {% for error in form.class_name.errors %}
@@ -58,4 +64,112 @@
     </form>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 试卷数据（学期-课程-班级的层级关系）
+  var paperData = {{ paper_data| tojson | safe }};
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const semesterSelect = document.getElementById('semester');
+    const courseSelect = document.getElementById('course_name');
+    const classSelect = document.getElementById('class_name');
+
+    // 更新课程下拉框
+    function updateCourseSelect() {
+      // 清空课程下拉框
+      courseSelect.innerHTML = '';
+
+      // 添加默认选项
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.text = '请选择课程';
+      courseSelect.appendChild(defaultOption);
+
+      const selectedSemester = semesterSelect.value;
+
+      if (selectedSemester && paperData && paperData[selectedSemester]) {
+        // 添加该学期下的课程选项
+        for (const course in paperData[selectedSemester]) {
+          const option = document.createElement('option');
+          option.value = course;
+          option.text = course;
+          courseSelect.appendChild(option);
+        }
+      }
+
+      // 触发课程选择变化事件，更新班级下拉框
+      updateClassSelect();
+    }
+
+    // 更新班级下拉框
+    function updateClassSelect() {
+      // 清空班级下拉框
+      classSelect.innerHTML = '';
+
+      // 添加默认选项
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.text = '请选择班级';
+      classSelect.appendChild(defaultOption);
+
+      const selectedSemester = semesterSelect.value;
+      const selectedCourse = courseSelect.value;
+
+      if (selectedSemester && selectedCourse &&
+        paperData && paperData[selectedSemester] &&
+        paperData[selectedSemester][selectedCourse]) {
+
+        // 添加该学期和课程下的班级选项
+        const classes = paperData[selectedSemester][selectedCourse];
+        for (let i = 0; i < classes.length; i++) {
+          const option = document.createElement('option');
+          option.value = classes[i];
+          option.text = classes[i];
+          classSelect.appendChild(option);
+        }
+      }
+    }
+
+    // 绑定事件监听器
+    semesterSelect.addEventListener('change', function () {
+      // 更新隐藏字段
+      document.getElementById('selected_semester_hidden').value = this.value;
+      // 更新课程下拉框
+      updateCourseSelect();
+    });
+
+    courseSelect.addEventListener('change', function () {
+      // 更新隐藏字段
+      document.getElementById('selected_course_hidden').value = this.value;
+      // 更新班级下拉框
+      updateClassSelect();
+    });
+
+    classSelect.addEventListener('change', function () {
+      // 更新隐藏字段
+      document.getElementById('selected_class_hidden').value = this.value;
+    });
+
+    // 初始化下拉框
+    updateCourseSelect();
+
+    // 表单提交前确保所有值都被正确选择
+    document.getElementById('borrowForm').addEventListener('submit', function (e) {
+      const selectedSemester = semesterSelect.value;
+      const selectedCourse = courseSelect.value;
+      const selectedClass = classSelect.value;
+
+      if (!selectedSemester || !selectedCourse || !selectedClass) {
+        e.preventDefault();
+        alert('请选择所有必填项');
+        return false;
+      }
+
+      // 记录选择的值，避免因为选项列表问题导致验证失败
+      console.log("提交表单 - 学期: " + selectedSemester + ", 课程: " + selectedCourse + ", 班级: " + selectedClass);
+    });
+  });
+</script>
 {% endblock %}

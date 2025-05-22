@@ -211,6 +211,59 @@ def view_pdf(id):
 def borrow():
     """借阅试卷"""
     form = BorrowForm()
+    
+    # 从数据库获取已归档试卷的学期、课程名称和班级列表作为下拉选项
+    archived_papers = Paper.query.filter(Paper.archived == True).all()
+    
+    # 提取所有学期、课程、班级的唯一组合
+    paper_data = {}
+    semesters = []
+    
+    for paper in archived_papers:
+        if paper.semester not in semesters:
+            semesters.append(paper.semester)
+            paper_data[paper.semester] = {}
+            
+        if paper.course_name not in paper_data[paper.semester]:
+            paper_data[paper.semester][paper.course_name] = []
+            
+        if paper.class_name not in paper_data[paper.semester][paper.course_name]:
+            paper_data[paper.semester][paper.course_name].append(paper.class_name)
+    
+    # 打印调试信息
+    print(f"找到 {len(semesters)} 个学期选项: {', '.join(semesters)}")
+    print(f"paper_data 结构: {paper_data}")
+    
+    # 设置学期选项
+    form.semester.choices = [(s, s) for s in semesters]
+    
+    # 初始化其他下拉框
+    if not semesters:
+        form.course_name.choices = [('', '暂无课程')]
+        form.class_name.choices = [('', '暂无班级')]
+    else:
+        form.course_name.choices = [('', '请选择学期')]
+        form.class_name.choices = [('', '请选择课程')]
+    
+    # 如果是AJAX请求，不处理
+    if request.args.get('_') or request.args.get('semester') or request.args.get('course_name'):
+        return render_template('paper/borrow_form.html', form=form, paper_data=paper_data)
+    
+    # 如果是POST请求，在验证表单之前根据学期和课程动态更新选项列表
+    if request.method == 'POST':
+        selected_semester = request.form.get('semester', '')
+        selected_course = request.form.get('course_name', '')
+        
+        print(f"表单提交 - 选择的学期: {selected_semester}, 课程: {selected_course}")
+        
+        # 更新课程选项
+        if selected_semester and selected_semester in paper_data:
+            form.course_name.choices = [('', '请选择课程')] + [(c, c) for c in paper_data[selected_semester].keys()]
+            
+            # 更新班级选项
+            if selected_course and selected_course in paper_data[selected_semester]:
+                form.class_name.choices = [('', '请选择班级')] + [(c, c) for c in paper_data[selected_semester][selected_course]]
+    
     if form.validate_on_submit():
         # 查找对应试卷
         paper = Paper.query.filter(
@@ -222,7 +275,7 @@ def borrow():
         
         if not paper:
             flash('未找到对应的已归档试卷', 'danger')
-            return render_template('paper/borrow_form.html', form=form)
+            return render_template('paper/borrow_form.html', form=form, paper_data=paper_data)
         
         # 检查是否已借阅
         existing_borrow = Borrowing.query.filter(
@@ -248,7 +301,7 @@ def borrow():
         flash('试卷借阅成功', 'success')
         return redirect(url_for('paper.paper_detail', id=paper.id))
     
-    return render_template('paper/borrow_form.html', form=form)
+    return render_template('paper/borrow_form.html', form=form, paper_data=paper_data)
 
 
 @paper_bp.route('/return', methods=['GET', 'POST'])
@@ -256,6 +309,71 @@ def borrow():
 def return_paper():
     """归还试卷"""
     form = ReturnForm()
+    
+    # 获取当前用户已借阅但未归还的试卷信息
+    borrowed_papers = db.session.query(Paper).join(Borrowing).filter(
+        Borrowing.borrower_id == current_user.id,
+        Borrowing.status == 'borrowed'
+    ).all()
+    
+    # 提取所有学期、课程、班级的唯一组合
+    paper_data = {}
+    semesters = []
+    
+    for paper in borrowed_papers:
+        if paper.semester not in semesters:
+            semesters.append(paper.semester)
+            paper_data[paper.semester] = {}
+            
+        if paper.course_name not in paper_data[paper.semester]:
+            paper_data[paper.semester][paper.course_name] = []
+            
+        if paper.class_name not in paper_data[paper.semester][paper.course_name]:
+            paper_data[paper.semester][paper.course_name].append(paper.class_name)
+    
+    # 打印调试信息
+    print(f"归还功能找到 {len(semesters)} 个学期选项: {', '.join(semesters)}")
+    print(f"归还功能 paper_data 结构: {paper_data}")
+    
+    # 设置学期选项
+    form.semester.choices = [(s, s) for s in semesters]
+    
+    # 初始化其他下拉框
+    if not semesters:
+        form.course_name.choices = [('', '暂无课程')]
+        form.class_name.choices = [('', '暂无班级')]
+    else:
+        form.course_name.choices = [('', '请选择学期')]
+        form.class_name.choices = [('', '请选择课程')]
+    
+    # 如果是AJAX请求，不处理
+    if request.args.get('_') or request.args.get('semester') or request.args.get('course_name'):
+        return render_template('paper/return_form.html', form=form, paper_data=paper_data)
+    
+    # 如果是POST请求，在验证表单之前根据学期和课程动态更新选项列表
+    if request.method == 'POST':
+        selected_semester = request.form.get('semester', '')
+        selected_course = request.form.get('course_name', '')
+        selected_class = request.form.get('class_name', '')
+        
+        # 也获取隐藏字段的值作为备份
+        hidden_semester = request.form.get('selected_semester', '')
+        hidden_course = request.form.get('selected_course', '')
+        hidden_class = request.form.get('selected_class', '')
+        
+        print(f"归还表单提交 - 选择的学期: {selected_semester}/{hidden_semester}, 课程: {selected_course}/{hidden_course}, 班级: {selected_class}/{hidden_class}")
+        
+        # 更新课程选项（优先使用下拉框的值，如果没有则使用隐藏字段的值）
+        effective_semester = selected_semester or hidden_semester
+        effective_course = selected_course or hidden_course
+        
+        if effective_semester and effective_semester in paper_data:
+            form.course_name.choices = [('', '请选择课程')] + [(c, c) for c in paper_data[effective_semester].keys()]
+            
+            # 更新班级选项
+            if effective_course and effective_course in paper_data[effective_semester]:
+                form.class_name.choices = [('', '请选择班级')] + [(c, c) for c in paper_data[effective_semester][effective_course]]
+    
     if form.validate_on_submit():
         # 查找对应试卷
         paper = Paper.query.filter(
@@ -266,7 +384,7 @@ def return_paper():
         
         if not paper:
             flash('未找到对应的试卷', 'danger')
-            return render_template('paper/return_form.html', form=form)
+            return render_template('paper/return_form.html', form=form, paper_data=paper_data)
         
         # 查找借阅记录
         borrowing = Borrowing.query.filter(
@@ -277,7 +395,7 @@ def return_paper():
         
         if not borrowing:
             flash('未找到您的借阅记录', 'warning')
-            return render_template('paper/return_form.html', form=form)
+            return render_template('paper/return_form.html', form=form, paper_data=paper_data)
         
         # 更新借阅记录
         borrowing.return_date = datetime.utcnow()
@@ -287,7 +405,7 @@ def return_paper():
         flash('试卷归还成功', 'success')
         return redirect(url_for('paper.paper_detail', id=paper.id))
     
-    return render_template('paper/return_form.html', form=form)
+    return render_template('paper/return_form.html', form=form, paper_data=paper_data)
 
 
 @paper_bp.route('/borrowings')
