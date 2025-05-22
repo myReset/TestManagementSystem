@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - 试卷管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">{{ title }}</h5>
+  </div>
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.semester.label(class="form-label") }}
+          {{ form.semester(class="form-control", placeholder="例如：2023-2024-1") }}
+          {% if form.semester.errors %}
+          <div class="text-danger">
+            {% for error in form.semester.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.course_name.label(class="form-label") }}
+          {{ form.course_name(class="form-control", placeholder="例如：Python程序设计") }}
+          {% if form.course_name.errors %}
+          <div class="text-danger">
+            {% for error in form.course_name.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.class_name.label(class="form-label") }}
+          {{ form.class_name(class="form-control", placeholder="例如：计算机2301") }}
+          {% if form.class_name.errors %}
+          <div class="text-danger">
+            {% for error in form.class_name.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.count.label(class="form-label") }}
+          {{ form.count(class="form-control", type="number", min="1") }}
+          {% if form.count.errors %}
+          <div class="text-danger">
+            {% for error in form.count.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.exam_type.label(class="form-label") }}
+          {{ form.exam_type(class="form-select") }}
+          {% if form.exam_type.errors %}
+          <div class="text-danger">
+            {% for error in form.exam_type.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.storage_location.label(class="form-label") }}
+          {{ form.storage_location(class="form-control", placeholder="例如：A区-01柜") }}
+          {% if form.storage_location.errors %}
+          <div class="text-danger">
+            {% for error in form.storage_location.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-12 mb-3">
+          {{ form.pdf_file.label(class="form-label") }}
+          {{ form.pdf_file(class="form-control") }}
+          {% if form.pdf_file.errors %}
+          <div class="text-danger">
+            {% for error in form.pdf_file.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if paper and paper.pdf_path %}
+          <div class="mt-2">
+            <span class="text-muted">当前文件: </span>
+            <a href="{{ url_for('paper.view_pdf', id=paper.id) }}" target="_blank">
+              <i class="fas fa-file-pdf"></i> 查看当前PDF文件
+            </a>
+            <small class="text-muted ms-2">（上传新文件将替换当前文件）</small>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <a href="{{ url_for('paper.papers') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i> 返回
+        </a>
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

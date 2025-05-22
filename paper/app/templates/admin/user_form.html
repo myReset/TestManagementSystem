@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - 试卷管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">{{ title }}</h5>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.staff_id.label(class="form-label") }}
+          {{ form.staff_id(class="form-control", placeholder="例如：20010001") }}
+          {% if form.staff_id.errors %}
+          <div class="text-danger">
+            {% for error in form.staff_id.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control", placeholder="例如：张三") }}
+          {% if form.name.errors %}
+          <div class="text-danger">
+            {% for error in form.name.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.gender.label(class="form-label") }}
+          {{ form.gender(class="form-select") }}
+          {% if form.gender.errors %}
+          <div class="text-danger">
+            {% for error in form.gender.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.department.label(class="form-label") }}
+          {{ form.department(class="form-control", placeholder="例如：计算机科学与技术") }}
+          {% if form.department.errors %}
+          <div class="text-danger">
+            {% for error in form.department.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.position.label(class="form-label") }}
+          {{ form.position(class="form-control", placeholder="例如：讲师") }}
+          {% if form.position.errors %}
+          <div class="text-danger">
+            {% for error in form.position.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.role.label(class="form-label") }}
+          {{ form.role(class="form-select") }}
+          {% if form.role.errors %}
+          <div class="text-danger">
+            {% for error in form.role.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.password.label(class="form-label") }}
+          {{ form.password(class="form-control", placeholder="请输入密码") }}
+          {% if form.password.errors %}
+          <div class="text-danger">
+            {% for error in form.password.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if user %}
+          <small class="text-muted">如不修改密码请留空</small>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.password2.label(class="form-label") }}
+          {{ form.password2(class="form-control", placeholder="请再次输入密码") }}
+          {% if form.password2.errors %}
+          <div class="text-danger">
+            {% for error in form.password2.errors %}
+            {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex justify-content-between">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i> 返回
+        </a>
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

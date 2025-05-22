@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}借阅记录 - 试卷管理系统{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">借阅记录</h5>
+      <a href="{{ url_for('paper.borrow') }}" class="btn btn-light btn-sm">
+        <i class="fas fa-plus"></i> 借阅试卷
+      </a>
+    </div>
+  </div>
+  <div class="card-body">
+    {% if borrowings %}
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>试卷信息</th>
+            <th>借阅人</th>
+            <th>借阅日期</th>
+            <th>归还日期</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for borrowing in borrowings %}
+          <tr>
+            <td>
+              <a href="{{ url_for('paper.paper_detail', id=borrowing.paper.id) }}">
+                {{ borrowing.paper.course_name }} ({{ borrowing.paper.class_name }})
+              </a>
+              <br>
+              <small class="text-muted">{{ borrowing.paper.semester }}</small>
+            </td>
+            <td>{{ borrowing.borrower.name }}</td>
+            <td>{{ borrowing.borrow_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>
+              {% if borrowing.return_date %}
+              {{ borrowing.return_date.strftime('%Y-%m-%d %H:%M:%S') }}
+              {% else %}
+              -
+              {% endif %}
+            </td>
+            <td>
+              {% if borrowing.status == 'borrowed' %}
+              <span class="badge bg-warning">借阅中</span>
+              {% else %}
+              <span class="badge bg-success">已归还</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if borrowing.status == 'borrowed' and borrowing.borrower_id == current_user.id %}
+              <a href="{{ url_for('paper.return_paper') }}" class="btn btn-outline-primary btn-sm">
+                归还
+              </a>
+              {% else %}
+              -
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i> 暂无借阅记录
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

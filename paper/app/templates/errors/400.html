@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}400 - 错误请求{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+  <div class="error mx-auto" data-text="400">
+    <h1 class="display-1 fw-bold">400</h1>
+  </div>
+  <p class="lead text-gray-800 mb-4">错误请求</p>
+  <p class="text-muted mb-4">您的请求包含错误，无法处理...</p>
+  <a href="{{ url_for('paper.index') }}" class="btn btn-primary">
+    <i class="fas fa-arrow-left me-2"></i>返回首页
+  </a>
+</div>
+{% endblock %}
