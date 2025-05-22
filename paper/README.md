@@ -2,6 +2,28 @@
 
 试卷管理系统是一个基于Flask的Web应用，用于管理和归档试卷。系统提供了试卷管理、借阅、归还以及统计分析等功能。
 
+
+## 页面预览
+### 首页
+![img.png](img.png)
+
+### 试卷管理
+![img_1.png](img_1.png)
+
+### 试卷借阅
+![img_2.png](img_2.png)
+
+### 试卷归还
+![img_3.png](img_3.png)
+
+### 借阅记录
+![img_4.png](img_4.png)
+
+### 统计分析
+![img_5.png](img_5.png)
+
+### 用户管理
+![img_6.png](img_6.png)
 ## 功能特点
 
 - 用户认证：管理员和教师角色，基于Flask-Login和Flask-Principal实现

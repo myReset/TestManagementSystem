@@ -3,121 +3,121 @@
 {% block title %}统计分析 - 试卷管理系统{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">试卷归档统计</h5>
-      </div>
-      <div class="card-body">
-        <div class="row mb-3">
-          <div class="col-md-6 text-center">
-            <div class="mb-3">
-              <h4>总试卷数</h4>
-              <h2 class="text-primary">{{ total_papers }}</h2>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <div class="text-center">
-                  <h5>已归档</h5>
-                  <h3 class="text-success">{{ archived_papers }}</h3>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">试卷归档统计</h5>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="text-center">
-                  <h5>未归档</h5>
-                  <h3 class="text-danger">{{ unarchived_papers }}</h3>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6 text-center">
+                            <div class="mb-3">
+                                <h4>总试卷数</h4>
+                                <h2 class="text-primary">{{ total_papers }}</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5>已归档</h5>
+                                        <h3 class="text-success">{{ archived_papers }}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5>未归档</h5>
+                                        <h3 class="text-danger">{{ unarchived_papers }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if plot_url1 %}
+                                <img src="data:image/png;base64,{{ plot_url1 }}" class="img-fluid" alt="归档统计饼图">
+                            {% else %}
+                                <div class="alert alert-info">暂无统计数据</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            {% if plot_url1 %}
-            <img src="data:image/png;base64,{{ plot_url1 }}" class="img-fluid" alt="归档统计饼图">
-            {% else %}
-            <div class="alert alert-info">暂无统计数据</div>
-            {% endif %}
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-6 mb-4">
-    <div class="card shadow-sm h-100">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">考试类型统计</h5>
-      </div>
-      <div class="card-body">
-        <div class="row mb-3">
-          <div class="col-md-6 text-center">
-            <div class="mb-3">
-              <h4>总试卷数</h4>
-              <h2 class="text-primary">{{ total_papers }}</h2>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <div class="text-center">
-                  <h5>考试</h5>
-                  <h3 class="text-info">{{ exam_papers }}</h3>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">考试类型统计</h5>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="text-center">
-                  <h5>考查</h5>
-                  <h3 class="text-warning">{{ check_papers }}</h3>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6 text-center">
+                            <div class="mb-3">
+                                <h4>总试卷数</h4>
+                                <h2 class="text-primary">{{ total_papers }}</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5>考试</h5>
+                                        <h3 class="text-info">{{ exam_papers }}</h3>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <h5>考查</h5>
+                                        <h3 class="text-warning">{{ check_papers }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if plot_url2 %}
+                                <img src="data:image/png;base64,{{ plot_url2 }}" class="img-fluid" alt="考试类型饼图">
+                            {% else %}
+                                <div class="alert alert-info">暂无统计数据</div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            {% if plot_url2 %}
-            <img src="data:image/png;base64,{{ plot_url2 }}" class="img-fluid" alt="考试类型饼图">
-            {% else %}
-            <div class="alert alert-info">暂无统计数据</div>
-            {% endif %}
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-md-12">
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">每月归档统计</h5>
-      </div>
-      <div class="card-body">
-        {% if plot_url3 %}
-        <img src="data:image/png;base64,{{ plot_url3 }}" class="img-fluid" alt="每月归档统计图">
-        {% else %}
-        <div class="alert alert-info">暂无按月统计数据</div>
-        {% endif %}
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">每月归档统计</h5>
+                </div>
+                <div class="card-body">
+                    {% if plot_url3 %}
+                        <img src="data:image/png;base64,{{ plot_url3 }}" class="img-fluid" alt="每月归档统计图">
+                    {% else %}
+                        <div class="alert alert-info">暂无按月统计数据</div>
+                    {% endif %}
 
-        {% if months %}
-        <div class="table-responsive mt-4">
-          <table class="table table-bordered table-hover">
-            <thead class="table-light">
-              <tr>
-                <th>月份</th>
-                {% for month in months %}
-                <th>{{ month }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>归档数量</th>
-                {% for count in counts %}
-                <td>{{ count }}</td>
-                {% endfor %}
-              </tr>
-            </tbody>
-          </table>
+                    {% if months %}
+                        <div class="table-responsive mt-4">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>月份</th>
+                                    {% for month in months %}
+                                        <th>{{ month }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <th>归档数量</th>
+                                    {% for count in counts %}
+                                        <td>{{ count }}</td>
+                                    {% endfor %}
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        {% endif %}
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

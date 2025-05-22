@@ -317,9 +317,9 @@ def statistics():
     exam_papers = Paper.query.filter_by(exam_type='考试').count()
     check_papers = Paper.query.filter_by(exam_type='考查').count()
     
-    # 统计每月归档数量
+    # 统计每月归档数量 - 使用MySQL的DATE_FORMAT代替SQLite的strftime
     monthly_stats = db.session.query(
-        db.func.strftime('%Y-%m', Paper.archive_date).label('month'),
+        db.func.DATE_FORMAT(Paper.archive_date, '%Y-%m').label('month'),
         db.func.count(Paper.id).label('count')
     ).filter(Paper.archived == True).group_by('month').order_by('month').all()
     
